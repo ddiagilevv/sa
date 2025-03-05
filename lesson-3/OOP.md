@@ -2,4 +2,4 @@
 
 class в js это *синтаксический сахар* над прототипами
 
-то что написано в [lesson-3/oop-examples/cats-classes.js](lesson-3/oop-examples/cats-classes.js)
+то что написано в [oop-examples/cats-classes.js](oop-examples/cats-classes.js)
