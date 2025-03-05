@@ -20,10 +20,12 @@ class Animal {
 }
 
 class Cat extends Animal {
+    #passportNumber;
     #password;
 
-    constructor(password, name, age, color, speakSound, actionDescription) {
+    constructor(passportNumber, password, name, age, color, speakSound, actionDescription) {
         super(name);
+        this.#passportNumber = passportNumber;
         this.#password = password;
         this.age = age;
         this.color = color;
@@ -39,13 +41,37 @@ class Cat extends Animal {
         console.log(`${this.name} ${this.actionDescription}`);
     }
 
+    // Геттер для пароля (запрещает его получение)
+    get password() {
+        return "Доступ запрещен";
+    }
+
+    // Сеттер для пароля
+    set password(newPassword) {
+        this.#password = newPassword;
+        console.log("Пароль успешно установлен.");
+    }
+
+    // Метод для проверки пароля
     checkPassword(password) {
         return this.#password === password;
+    }
+
+    // Геттер для номера паспорта
+    get passportNumber() {
+        return this.#passportNumber;
+    }
+
+    // Сеттер для номера паспорта
+    set passportNumber(newPassportNumber) {
+        this.#passportNumber = newPassportNumber;
+        console.log("Номер паспорта успешно обновлен.");
     }
 
     toJSON() {
         return {
             ...super.toJSON(),
+            passportNumber: this.#passportNumber,
             password: this.#password,
             age: this.age,
             color: this.color,
@@ -55,7 +81,7 @@ class Cat extends Animal {
     }
 
     static fromJSON(obj) {
-        return new Cat(obj.password, obj.name, obj.age, obj.color, obj.speakSound, obj.actionDescription);
+        return new Cat(obj.passportNumber, obj.password, obj.name, obj.age, obj.color, obj.speakSound, obj.actionDescription);
     }
 }
 
@@ -147,6 +173,7 @@ function adminPanel() {
 }
 
 function registerCat() {
+    let passportNumber = readline.question("Введите номер паспорта кота: ");
     let password = readline.question("Введите пароль кота: ");
     let name = readline.question("Введите имя кота: ");
     let age = parseInt(readline.question("Введите возраст кота: "));
@@ -154,7 +181,7 @@ function registerCat() {
     let speakSound = readline.question("Введите звук, который издает кот: ");
     let actionDescription = readline.question("Введите описание действия кота: ");
     
-    let newCat = new Cat(password, name, age, color, speakSound, actionDescription);
+    let newCat = new Cat(passportNumber, password, name, age, color, speakSound, actionDescription);
     animals.push(newCat);
     console.log("Кот успешно зарегистрирован!");
 }
@@ -202,7 +229,7 @@ function listAnimals() {
     } else {
         animals.forEach(animal => {
             console.log(animal instanceof Cat
-                ? `${animal.id}: Кот ${animal.name}, ${animal.age} лет, ${animal.color}, ${animal.speakSound}, ${animal.actionDescription}`
+                ? `${animal.id}: Кот ${animal.name}, ${animal.age} лет, ${animal.color}, ${animal.speakSound}, ${animal.actionDescription}, Паспорт: ${animal.passportNumber}`
                 : `${animal.id}: Еж ${animal.name}, ${animal.speakSound}`);
         });
     }

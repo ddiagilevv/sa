@@ -2,10 +2,12 @@ const fs = require("fs");
 const readline = require("readline-sync");
 
 class Cat {
+    #passportNumber;
     #password;
 
-    constructor(password, name, age, color, speakSound, actionDescription) {
+    constructor(passportNumber, password, name, age, color, speakSound, actionDescription) {
         this.id = Date.now().toString();
+        this.#passportNumber = passportNumber;
         this.#password = password;
         this.name = name;
         this.age = age;
@@ -22,13 +24,32 @@ class Cat {
         console.log(`${this.name} ${this.actionDescription}`);
     }
 
-    checkPassword(password) {
-        return this.#password === password;
+    // Геттер для пароля (запрещает его получение)
+    get password() {
+        return "Доступ запрещен";
+    }
+
+    // Сеттер для пароля
+    set password(newPassword) {
+        this.#password = newPassword;
+        console.log("Пароль успешно установлен.");
+    }
+
+    // Геттер для номера паспорта
+    get passportNumber() {
+        return this.#passportNumber;
+    }
+
+    // Сеттер для номера паспорта
+    set passportNumber(newPassportNumber) {
+        this.#passportNumber = newPassportNumber;
+        console.log("Номер паспорта успешно обновлен.");
     }
 
     toJSON() {
         return {
             id: this.id,
+            passportNumber: this.#passportNumber,
             password: this.#password,
             name: this.name,
             age: this.age,
@@ -39,7 +60,7 @@ class Cat {
     }
 
     static fromJSON(obj) {
-        return new Cat(obj.password, obj.name, obj.age, obj.color, obj.speakSound, obj.actionDescription);
+        return new Cat(obj.passportNumber, obj.password, obj.name, obj.age, obj.color, obj.speakSound, obj.actionDescription);
     }
 }
 
@@ -66,7 +87,7 @@ function startProgram() {
         adminPanel();
     } else {
         let cat = cats.find(c => c.id === id);
-        if (cat && cat.checkPassword(password)) {
+        if (cat && cat.password === password) {
             console.log(`Добро пожаловать, ${cat.name}!`);
         } else {
             console.log("Неверные учетные данные!");
@@ -104,6 +125,7 @@ function adminPanel() {
 }
 
 function registerCat() {
+    let passportNumber = readline.question("Введите номер паспорта кота: ");
     let password = readline.question("Введите пароль кота: ");
     let name = readline.question("Введите имя кота: ");
     let age = parseInt(readline.question("Введите возраст кота: "));
@@ -111,7 +133,7 @@ function registerCat() {
     let speakSound = readline.question("Введите звук, который издает кот: ");
     let actionDescription = readline.question("Введите описание действия кота: ");
     
-    let newCat = new Cat(password, name, age, color, speakSound, actionDescription);
+    let newCat = new Cat(passportNumber, password, name, age, color, speakSound, actionDescription);
     cats.push(newCat);
     console.log("Кот успешно зарегистрирован! ID: " + newCat.id);
 }
@@ -150,7 +172,7 @@ function listCats() {
         console.log("Список котов пуст.");
     } else {
         cats.forEach(cat => {
-            console.log(`${cat.id}: ${cat.name}, ${cat.age} лет, ${cat.color}, ${cat.speakSound}, ${cat.actionDescription}`);
+            console.log(`${cat.id}: ${cat.name}, ${cat.age} лет, ${cat.color}, ${cat.speakSound}, ${cat.actionDescription}, Паспорт: ${cat.passportNumber}`);
         });
     }
 }
