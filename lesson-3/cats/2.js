@@ -74,6 +74,19 @@ let cat_006 = {
 };
 
 
+let dog = {
+    name: "Дружок",
+    age: 10,
+    color: "black",
+    trained_commands: ["сидеть", "лежать", "апорт"],
+    speak: function() {
+        console.log(this.name + "ГАВ!");
+    },
+    action: function() {
+        console.log(this.name + "бежит");
+    }
+};
+
 
 //cat.speak(); // "Барсик говорит: Мяу!"
 //dog.speak(); // "Дружок говорит: Гав!"
