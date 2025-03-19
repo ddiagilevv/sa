@@ -21,7 +21,8 @@
 - **Linked List**  
   - Singly Linked List  //todo: вставить ссылку
   - Doubly Linked List  
-  - Circular Linked List  
+  - Circular Singly Linked List
+  - Circular Doubly Linked List
 - **Stack (LIFO)**  
 - **Queue (FIFO)**  
 - **Deque (Double-Ended Queue)**  
