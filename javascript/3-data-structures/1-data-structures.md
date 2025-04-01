@@ -29,17 +29,17 @@
 
 ### 1.2. Non-Dynamic (Static)  
 - **Array (Fixed Size)**  //todo: вставить ссылку
-- **Static List**  
+- **Static List**  [разобрать самой]
 
 ## 2. Non-Linear Structures  
 ### 2.1. Trees  
 - **Binary Tree**  
   - Binary Search Tree (BST) [done]
   - **Balanced Trees:**  
-    - AVL Tree  
-    - Red-Black Tree  
-    - B-Tree  
-- **Trie (Prefix Tree)**  
+    - AVL Tree
+    - Red-Black Tree
+    - B-Tree
+- **Trie (Prefix Tree)**
 - **Heap:**  
   - Min Heap  
   - Max Heap  
