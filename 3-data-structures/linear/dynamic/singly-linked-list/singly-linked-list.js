@@ -58,9 +58,53 @@ class LinkedList {
         this.size++;
     }
 
-    // можно сделать вставку в начало (но я не сделал)
+    // можно сделать вставку в начало
 
-    //remove(value)
+    remove(index) {
+        if (this.isEmpty()){
+            console.log(`Список пуст`);
+            return null;
+        }
+        if (index < 0 || index >= this.size) {
+            console.log(`Индекс вне границ списка`);
+            return null;
+        }
+        let removedNode;
+        if (index === 0) {
+            removedNode = this.head;
+            this.head = this.head.next;
+        }
+        else {
+            let current = this.head;
+            let previous = null;
+            let i = 0;
+            while (i < index) {
+                previous = current;
+                current = current.next;
+                i++;
+            }
+            removedNode = current;
+            previous.next = current.next;
+        }
+        this.size--;
+        return (`Удален элемент: ${removedNode.value}, индекс: ${index}`);
+    }
+    print() {
+        if (this.isEmpty()){
+            console.log(`Список пуст`);
+            return null;
+        }
+        let current = this.head;
+        let elements = "";
+        while (current.next !== null) {
+            // Синтаксис тернарного оператора: условие ? значение_если_true : значение_если_false;
+            elements += current.value + (current.next === null ? "." : "->");
+            //elements += current.value;
+            current = current.next;        
+        }
+        console.log(elements);
+//        console.log("Элементы - ${elements}");
+    }
     //search(value)
 }
 
@@ -74,3 +118,8 @@ list.append(1234);
 list.append(234564);
 
 console.log(list.getSize());
+
+list.remove(3);
+console.log(list.getSize());
+console.log();
+list.print();
