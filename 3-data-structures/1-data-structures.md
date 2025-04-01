@@ -34,7 +34,7 @@
 ## 2. Non-Linear Structures  
 ### 2.1. Trees  
 - **Binary Tree**  
-  - Binary Search Tree (BST)  
+  - Binary Search Tree (BST) [done]
   - **Balanced Trees:**  
     - AVL Tree  
     - Red-Black Tree  
