@@ -1,1 +1,1 @@
-\mathbb{C}
+{\displaystyle \mathbb {C} }
