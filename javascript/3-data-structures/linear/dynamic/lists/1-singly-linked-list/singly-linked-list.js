@@ -96,9 +96,9 @@ class LinkedList {
         }
         let current = this.head;
         let elements = "";
-        while (current.next !== null) {
+        while (current) {
             // Синтаксис тернарного оператора: условие ? значение_если_true : значение_если_false;
-            elements += current.value + (current.next === null ? "." : "->");
+            elements += current.value + (current.next ? "-" : "");
             //elements += current.value;
             current = current.next;        
         }

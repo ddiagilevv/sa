@@ -1,6 +1,6 @@
 class DoubleNode {
     constructor(value){
-        this.value;
+        this.value = value;
         this.next = null;
         this.prev = null;
     }
@@ -47,7 +47,7 @@ class DoublyLinkedList{
         if (index === 0){
             removedNode = this.head;
             this.head = this.head.next;
-            if (this.head){
+            if (this.head){ //это проверка, существует ли this.head, если this.head НЕ: - null, -undefined, - 0, - NaN, - "", то true, иначе false
                 this.head.prev = null;
             } else {
                 this.tail = null;
@@ -77,7 +77,7 @@ class DoublyLinkedList{
     search(value){
         let current = this.head;
         while (current) {
-            if (current === value) {
+            if (current.value === value) {
                 console.log(`Найденное значение ${current.value}`);
                 return true;
             }
@@ -102,4 +102,40 @@ class DoublyLinkedList{
         console.log(values);
     }
 
+    reverse(){
+        if (this.isEmpty()) {
+            console.log(`Список пуст`);
+            return;
+        } else if (this.size === 1) {
+            console.log(`Список имеет всего один элемент`);
+            return;
+        }
+
+        let current = this.head;
+
+        let tempHead = this.head;
+        this.head = this.tail;
+        this.tail = tempHead;
+        
+        while (current) {
+            let temp = current.next;
+            current.next = current.prev;
+            current.prev = temp;
+
+            current = current.prev;
+        }
+    }
+
 }
+
+const list = new DoublyLinkedList();
+
+list.append("0");
+list.append("1");
+list.append(2);
+list.append(3);
+list.append(4);
+list.append(5);
+
+list.reverse();
+list.print();
