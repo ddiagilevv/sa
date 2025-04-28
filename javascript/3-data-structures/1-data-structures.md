@@ -44,9 +44,9 @@
   - Min Heap  
   - Max Heap  
 
-### 2.2. Graphs  
+### 2.2. Graphs
+- **Undirected Graph**
 - **Directed Graph (Digraph)**  
-- **Undirected Graph**  
 - **Weighted / Unweighted Graphs**  
 - **Representation:**  
   - Adjacency Matrix  
