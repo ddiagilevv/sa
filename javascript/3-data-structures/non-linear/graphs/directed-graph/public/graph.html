@@ -1,91 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Undirected Graph Visualization</title>
+  <title>Граф с петлями, масштабированием и ресетом</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    button#resetView {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button#resetView:hover {
+      background: #0056b3;
+    }
+    svg {
+      width: 100%;
+      height: 100vh;
+      display: block;
+    }
     circle { fill: lightblue; }
-    text { font-size: 12px; }
-    line { stroke: black; stroke-width: 1.5px; } /* УБРАЛИ marker-end */
+    text { font-size: 12px; pointer-events: none; }
+    line, path.loop { stroke: black; stroke-width: 1.5px; fill: none; }
   </style>
 </head>
 <body>
-  <svg width="800" height="600"></svg>
 
-  <script>
-    async function loadGraph() {
-      try {
-        const response = await fetch('/graph_data.json');
-        const data = await response.json();
-        const nodes = data.nodes;
-        const links = data.links;
+<button id="resetView">Ресет камеры</button>
+<svg></svg>
 
-        const svg = d3.select('svg');
+<script>
+async function loadGraph() {
+  try {
+    const response = await fetch('/graph_data.json');
+    const data = await response.json();
+    const nodes = data.nodes;
+    const links = data.links;
 
-        const simulation = d3.forceSimulation(nodes)
-          .force('link', d3.forceLink(links).id(d => d.id).distance(100))
-          .force('charge', d3.forceManyBody().strength(-400))
-          .force('center', d3.forceCenter(400, 300));
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-        const link = svg.selectAll('line')
-          .data(links)
-          .enter().append('line');
+    const svg = d3.select('svg');
+    const container = svg.append('g');
 
-        const node = svg.selectAll('circle')
-          .data(nodes)
-          .enter().append('circle')
-          .attr('r', 20)
-          .call(d3.drag()
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended));
+    const zoom = d3.zoom()
+      .scaleExtent([0.1, 10])
+      .on('zoom', (event) => {
+        container.attr('transform', event.transform);
+      });
 
-        const label = svg.selectAll('text')
-          .data(nodes)
-          .enter().append('text')
-          .text(d => d.id)
-          .attr('dy', 4)
-          .attr('text-anchor', 'middle');
+    svg.call(zoom);
 
-        simulation.on('tick', () => {
-          link
-            .attr('x1', d => d.source.x)
-            .attr('y1', d => d.source.y)
-            .attr('x2', d => d.target.x)
-            .attr('y2', d => d.target.y);
+    const simulation = d3.forceSimulation(nodes)
+      .force('link', d3.forceLink(links).id(d => d.id).distance(150))
+      .force('charge', d3.forceManyBody().strength(-400))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collision', d3.forceCollide(50));
 
-          node
-            .attr('cx', d => d.x)
-            .attr('cy', d => d.y);
+    const normalLinks = links.filter(d => d.source !== d.target);
+    const loopLinks = links.filter(d => d.source === d.target);
 
-          label
-            .attr('x', d => d.x)
-            .attr('y', d => d.y);
+    const link = container.append('g')
+      .attr('class', 'links')
+      .selectAll('line')
+      .data(normalLinks)
+      .enter().append('line');
+
+    const loop = container.append('g')
+      .attr('class', 'loops')
+      .selectAll('path')
+      .data(loopLinks)
+      .enter().append('path')
+      .attr('class', 'loop');
+
+    const node = container.append('g')
+      .attr('class', 'nodes')
+      .selectAll('circle')
+      .data(nodes)
+      .enter().append('circle')
+      .attr('r', 20)
+      .call(d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended));
+
+    const label = container.append('g')
+      .attr('class', 'labels')
+      .selectAll('text')
+      .data(nodes)
+      .enter().append('text')
+      .text(d => d.id)
+      .attr('dy', 4)
+      .attr('text-anchor', 'middle');
+
+    simulation.on('tick', () => {
+      link
+        .attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
+
+      loop
+        .attr('d', d => {
+          const r = 30; 
+          return `
+            M ${d.source.x} ${d.source.y}
+            C ${d.source.x + r} ${d.source.y - r},
+              ${d.source.x + r} ${d.source.y + r},
+              ${d.source.x} ${d.source.y}
+          `;
         });
 
-        function dragstarted(event, d) {
-          if (!event.active) simulation.alphaTarget(0.3).restart();
-          d.fx = d.x;
-          d.fy = d.y;
-        }
+      node
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
 
-        function dragged(event, d) {
-          d.fx = event.x;
-          d.fy = event.y;
-        }
+      label
+        .attr('x', d => d.x)
+        .attr('y', d => d.y);
+    });
 
-        function dragended(event, d) {
-          if (!event.active) simulation.alphaTarget(0);
-          d.fx = null;
-          d.fy = null;
-        }
-      } catch (error) {
-        console.error('Ошибка загрузки графа:', error);
-      }
+    simulation.on('end', () => {
+      resetView(); // Автофокус при загрузке
+    });
+
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
     }
 
-    loadGraph();
-  </script>
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    function resetView() {
+      const bounds = container.node().getBBox();
+      const fullWidth = width;
+      const fullHeight = height;
+      const widthScale = fullWidth / bounds.width;
+      const heightScale = fullHeight / bounds.height;
+      const minScale = Math.min(widthScale, heightScale) * 0.8;
+
+      const translateX = (fullWidth - bounds.width * minScale) / 2 - bounds.x * minScale;
+      const translateY = (fullHeight - bounds.height * minScale) / 2 - bounds.y * minScale;
+
+      svg.transition()
+        .duration(1000) // 1 секунда плавного ресета
+        .call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(minScale));
+    }
+
+    document.getElementById('resetView').addEventListener('click', () => {
+      resetView();
+    });
+
+  } catch (error) {
+    console.error('Ошибка загрузки графа:', error);
+  }
+}
+
+loadGraph();
+</script>
+
 </body>
 </html>

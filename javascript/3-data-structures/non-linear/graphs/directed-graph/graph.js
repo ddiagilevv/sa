@@ -113,10 +113,41 @@ graph.addEdge('Джерри', 'Glootie');
 
 
 
-//graph.addEdge('A', 'C');
-//graph.addEdge('B', 'D');
-//graph.addEdge('C', 'D');
-//graph.addEdge('D', 'E');
+graph.addEdge('A', 'C');
+graph.addEdge('A', 'A');
+graph.addEdge('A', 'D');
+graph.addEdge('B', 'D');
+graph.addEdge('C', 'D');
+graph.addEdge('D', 'E');
+
+
+// Петля
+graph.addEdge('AAA', 'AAA');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 console.log("Текущий граф:");
 graph.printGraph();
@@ -124,10 +155,6 @@ graph.printGraph();
 // Удаляем ребро и вершину
 //graph.removeEdge('D', 'E');
 //graph.removeVertex('C');
-
-console.log("\nГраф после изменений:");
-graph.printGraph();
-
 
 // Сохраняем граф в JSON-файл для визуализации
 const fs = require('fs');
