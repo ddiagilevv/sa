@@ -65,11 +65,96 @@ class UndirectedGraph {
     // перебираем все вершины в графе
     for(let vertex in this.adjacencyList) {
       // разделяя запятыми, преобразуем множество соседей в строку
-      const neighbors = Array.from(this.adjacencyList[vertex]).join(","); // TODO объяснить еще раз
+      const neighbors = Array.from(this.adjacencyList[vertex]).join(",");
+      /*
+      1. adjacencyList[vertex]. Здесь vertex в квадратных скобка это переменная в которую поочередно будут попадать имя каждой вершины.
+      2. Array - см https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+      3. Array.from(парметр) делает массив из любого итерируемого объекта
+      4. .join(",") - превращает массив (массив = Array.from(парметр);) в строку. "," - delimeter, т.е. разделитель.
+      5. результат работы Array.from(this.adjacencyList[vertex]).join(","); сохранен в neighbors
+      6. Array.from(...).join(...) - это method chaining.
+      */
       console.log(`${vertex} -> ${neighbors}`);
 
     }
   }
+
+
+
+  // DFS Recursive
+  // Depth-First Search Recursive / Рекурсивный поиск в глубину
+  /*
+    1) начинаем с указанной вершины (start)
+    2) посещаем ее и отмечаем как посещенную
+    3) Рекурсивно посещаем всех ее непосещенных соседей
+    4) Алгортм идет "вглубь" графа до конца по одной ветке
+    5) Т.к. алгоритм рекурсивный - на очень бчень больших графах будет stack overflow. 
+  */
+  dfsRecursive(start){
+    const result = []; // список для записи порядка посещения вершин
+    const visited = new Set(); // множество для отметки посещенных вершин
+
+    const dfs = (vertex) => {
+      // если вершина не существует - возвращаемся
+      if (!vertex) return;
+
+      visited.add(vertex); // отметили вершину как посещенную
+      result.push(vertex); // добавили вершину в результат
+
+      // перебор всех соседей текущей вершины (vertex)
+      for (let neighbor of this.adjacencyList[vertex]){
+        // если сосед не посещен
+        if(!visited.has(neighbor)) {
+          dfs(neighbor);
+        }
+      }
+    };
+
+    dfs(start); // запуск обхода с начальной вершины
+    return result;
+  }
+
+
+  // DFS Iterative
+  // Depth-First Search Iterative / Итеративный обход в глубину (через стек)
+  // Стек работает по принципу LIFO
+  // 1) Сначала кладем в стек стартовую вершину.
+  // 2) Пока стек не пуст:
+  // достаем вершину
+  // посещаем ее
+  // кладем всех непоседенных соседей в стек
+  dfsIterative(start){
+    const stack = [start]; // используем stack, начальная вершина - в нем
+    const result = [];
+    const visited = new Set();
+
+    visited.add(start); // сразу отметили начальную вершину
+
+    while(stack.length){
+      const vertex = stack.pop(); // забираем вершину из стека
+      result.push(vertex); // добавили в результат
+
+      // перебор всех соседей текущей вершины (vertex)
+      for (let neighbor of this.adjacencyList[vertex]){
+        // если сосед не посещен
+        if(!visited.has(neighbor)) {
+          visited.add(neighbor); // отметили его
+          stack.push(neighbor);
+
+        }
+      }
+    }
+
+    return result;
+  }
+
+
+
+
+  // BSF
+  // Breadth-First Search
+  // 
+
 }
 
 
@@ -152,7 +237,11 @@ graph.addEdge('Unity_5', 'Unity_4');
 
 
 // Петля
-//graph.addEdge('AAA', 'AAA');
+// graph.addEdge('AAA', 'AAA');
+
+
+
+
 
 
 
