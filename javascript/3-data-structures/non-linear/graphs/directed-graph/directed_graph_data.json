@@ -1,0 +1,46 @@
+{
+  "nodes": [
+    {
+      "id": "Rick"
+    },
+    {
+      "id": "Beth"
+    },
+    {
+      "id": "Jerry"
+    },
+    {
+      "id": "Summer"
+    },
+    {
+      "id": "Morty"
+    }
+  ],
+  "links": [
+    {
+      "source": "Rick",
+      "target": "Beth",
+      "isBidirectional": false
+    },
+    {
+      "source": "Rick",
+      "target": "Jerry",
+      "isBidirectional": false
+    },
+    {
+      "source": "Beth",
+      "target": "Summer",
+      "isBidirectional": false
+    },
+    {
+      "source": "Jerry",
+      "target": "Morty",
+      "isBidirectional": false
+    },
+    {
+      "source": "Morty",
+      "target": "Summer",
+      "isBidirectional": false
+    }
+  ]
+}
