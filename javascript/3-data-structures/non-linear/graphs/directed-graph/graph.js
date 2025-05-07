@@ -1,135 +1,58 @@
 class DirectedGraph {
-    constructor() {
-      this.adjacencyList = {};
-    }
-  
-    addVertex(vertex) {
-      if (!this.adjacencyList[vertex]) {
-        this.adjacencyList[vertex] = new Set();
-      }
-    }
-  
-    addEdge(fromVertex, toVertex) {
-      this.addVertex(fromVertex);
-      this.addVertex(toVertex);
-      this.adjacencyList[fromVertex].add(toVertex); // Только одно направление!
-    }
-  
-    removeEdge(fromVertex, toVertex) {
-      if (this.adjacencyList[fromVertex]) {
-        this.adjacencyList[fromVertex].delete(toVertex);
-      }
-    }
-  
-    removeVertex(vertex) {
-      if (!this.adjacencyList[vertex]) return;
-  
-      // Удалим vertex из списков всех других вершин (входящие ребра)
-      for (let v in this.adjacencyList) {
-        this.adjacencyList[v].delete(vertex);
-      }
-  
-      // Удалим саму вершину
-      delete this.adjacencyList[vertex];
-    }
-  
-    printGraph() {
-      for (let vertex in this.adjacencyList) {
-        const neighbors = Array.from(this.adjacencyList[vertex]).join(",");
-        console.log(`${vertex} -> ${neighbors}`);
-      }
-    }
-  
-    dfsRecursive(start) {
-      const result = [];
-      const visited = new Set();
-  
-      const dfs = (vertex) => {
-        if (!vertex) return;
-        visited.add(vertex);
-        result.push(vertex);
-  
-        for (let neighbor of this.adjacencyList[vertex]) {
-          if (!visited.has(neighbor)) {
-            dfs(neighbor);
-          }
-        }
-      };
-  
-      dfs(start);
-      return result;
-    }
-  
-    dfsIterative(start) {
-      const stack = [start];
-      const result = [];
-      const visited = new Set();
-      visited.add(start);
-  
-      while (stack.length) {
-        const vertex = stack.pop();
-        result.push(vertex);
-  
-        for (let neighbor of this.adjacencyList[vertex]) {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            stack.push(neighbor);
-          }
-        }
-      }
-  
-      return result;
-    }
+  constructor(){
+    this.adjacencyList = {};
   }
-  
-  const graph = new DirectedGraph();
-  
-  // Пример добавления направленных ребер (аналогично предыдущему графу)
-  graph.addEdge('Rick', 'Beth');
-  graph.addEdge('Rick', 'Jerry');
-  graph.addEdge('Beth', 'Summer');
-  graph.addEdge('Jerry', 'Morty');
-  graph.addEdge('Morty', 'Summer');
-  
-  // Печать графа
-  console.log("Directed Graph:");
-  graph.printGraph();
-  
-  const fs = require('fs');
 
-  function exportGraph(graph) {
-    const nodes = [];
-    const links = [];
-    const seen = new Set();
-  
-    // Добавляем все вершины
-    for (let vertex in graph.adjacencyList) {
-      nodes.push({ id: vertex });
+  addVertex(vertex) {
+    // проверка
+    if (!this.adjacencyList[vertex]){
+      this.adjacencyList[vertex] = new Set();
     }
-  
-    // Добавляем направленные ребра
-    for (let source in graph.adjacencyList) {
-      for (let target of graph.adjacencyList[source]) {
-        const forward = `${source}->${target}`;
-        const reverse = `${target}->${source}`;
-        const isBidirectional = graph.adjacencyList[target]?.has(source);
-  
-        // Чтобы не дублировать одно и то же ребро
-        if (!seen.has(forward)) {
-          links.push({
-            source,
-            target,
-            isBidirectional: isBidirectional && !seen.has(reverse) // только один раз помечаем флаг
-          });
-          seen.add(forward);
-        }
-      }
-    }
-  
-    const data = { nodes, links };
-    fs.writeFileSync('directed_graph_data.json', JSON.stringify(data, null, 2));
   }
-  
-  exportGraph(graph);
-  
-  
+
+  // метод добавления ребра
+  addEdge(fromVertex, toVertex) {
+    this.addVertex(fromVertex);
+    this.addVertex(toVertex);
+    
+    //добавим vertex-ы в списки соседей друг друга
+    this.adjacencyList[fromVertex].add(toVertex); // только одно направление!
+  }
+
+  removeEdge(fromVertex, toVertex){
+    if (this.adjacencyList[fromVertex]){
+      this.adjacencyList[fromVertex].delete(toVertex)
+    }
+  }
+
+  removeVertex(vertex) {
+    // если уже отсутствует - не делаем ничего
+    if (!this.adjacencyList[vertex]) return;
+
+    // перебираем всех соседей этой вершины
+    for (let v of this.adjacencyList){
+      // у каждого соседа удаляем эту вершину(vertex) из их списка соседей
+      this.adjacencyList[v].delete(vertex);
+    }
+
+    // удаление самой вершины
+    delete this.adjacencyList[vertex];
+  }
+
+  printGraph() {
+    // перебираем все вершины в графе
+    for(let vertex in this.adjacencyList) {
+      // разделяя запятыми, преобразуем множество соседей в строку
+      const neighbors = Array.from(this.adjacencyList[vertex]).join(",");
+      /*
+      1. adjacencyList[vertex]. Здесь vertex в квадратных скобка это переменная в которую поочередно будут попадать имя каждой вершины.
+      2. Array - см https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+      3. Array.from(парметр) делает массив из любого итерируемого объекта
+      4. .join(",") - превращает массив (массив = Array.from(парметр);) в строку. "," - delimeter, т.е. разделитель.
+      5. результат работы Array.from(this.adjacencyList[vertex]).join(","); сохранен в neighbors
+      6. Array.from(...).join(...) - это method chaining.
+      */
+      console.log(`${vertex} -> ${neighbors}`);
+    }
+  }
+}
